@@ -8,7 +8,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'architectury-loom-template'
+rootProject.name = 'improvisations'
 
 include(':fabric')
 include(':neoforge')

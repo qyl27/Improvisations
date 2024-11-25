@@ -1,10 +1,9 @@
 {
   "required": true,
-  "package": "com.example.neoforge.mixin",
+  "package": "cx.rain.mc.improvisations.mixin",
   "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8",
   "client": [
-    "MinecraftMixin"
   ],
   "mixins": [
   ],

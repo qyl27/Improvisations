@@ -1,16 +1,10 @@
-# Architectury-loom Template
+# Improvisations
+Solve the problems in Minecraft with a Mod.  
 
-An template using [architectury-loom](https://github.com/architectury/architectury-loom) to create multi-platform Minecraft mod.
-
-## Getting started
-
-- Use this repo as template.
-- Open in Intellij IDEA.
-- Changing the modid, description, license, source, etc.
-- Enjoy yourself!
-
-Also, issue or PR are welcome.
+## Features
+- Take the saddle off from the pig by using `Shift` + `Right click` with an empty hand.
+- `Shift` + `Right click` can pat your pet (tamed cat and wolf), they will happy and get healed.
 
 ## License
-
-This template is licensed under CC BY 4.0, feel free to use it as a boilerplate.
+All rights reversed.  
+Everyone may use, convey, propagate, or modify this mod for non-profit proposals.  

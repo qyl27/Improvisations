@@ -1,3 +1,5 @@
+import java.time.OffsetDateTime
+
 plugins {
     id 'java'
     id 'maven-publish'
@@ -5,6 +7,8 @@ plugins {
     id 'dev.architectury.loom' version "${architectury_loom_version}"
     id 'com.github.johnrengelman.shadow' version "${shadow_plugin_version}" apply false
 }
+
+def ENV = System.getenv()
 
 base {
     archivesName = rootProject.archive_base_name
@@ -15,7 +19,7 @@ architectury {
 }
 
 loom {
-    accessWidenerPath = file('src/main/resources/example.accesswidener')
+    accessWidenerPath = file('src/main/resources/improvisations.accesswidener')
 
     runConfigs.configureEach {
         ideConfigGenerated = false
@@ -26,7 +30,6 @@ dependencies {
     // In order to use the @Environment and @EnvironmentInterface annotations from fabric loader.
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
-    // Todo: Template: Comment line below if you don't want to use Architecury API.
     modApi "dev.architectury:architectury:${rootProject.architectury_api_version}"
 }
 
@@ -85,19 +88,10 @@ allprojects {
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
 
-        // Todo: Template: Use the mojmap by default, or you'd like yarn.
         mappings loom.layered() {
             officialMojangMappings()
             parchment("org.parchmentmc.data:parchment-${rootProject.parchment_minecraft_version}:${rootProject.parchment_version}@zip")
         }
-//        mappings "net.fabricmc:yarn:${rootProject.minecraft_version}+build.3:v2"
-
-        // Mod dependencies
-//        modImplementation "com.terraformersmc:modmenu:11.0.1"
-        // Non mod libraries
-//        implementation 'blue.endless:jankson:1.2.2'
-        // If you want nesting the mod/library in your mod (aka. Jar in jar)
-//        include 'blue.endless:jankson:1.2.2'
     }
 
     tasks.withType(JavaCompile) {
@@ -120,7 +114,8 @@ allprojects {
                 'pack.mcmeta',
                 'META-INF/mods.toml',
                 'META-INF/neoforge.mods.toml',
-                'fabric.mod.json'
+                'fabric.mod.json',
+                'build_info.properties'
         ]
 
         var replaceTokens = [
@@ -143,7 +138,9 @@ allprojects {
                 fabric_minecraft_version_range     : rootProject.fabric_minecraft_version_range,
                 fabric_loader_version_range        : rootProject.fabric_loader_version_range,
                 fabric_api_version_range           : rootProject.fabric_api_version_range,
-                fabric_architectury_version_range  : rootProject.fabric_architectury_version_range
+                fabric_architectury_version_range  : rootProject.fabric_architectury_version_range,
+
+                build_time                         : OffsetDateTime.now()
         ]
 
         inputs.properties replaceTokens
@@ -157,11 +154,18 @@ allprojects {
     publishing {
         repositories {
             mavenLocal()
-        }
 
-        publications {
-            maven(MavenPublication) {
-                from components.java
+            maven {
+                name = 'YuluoMaven'
+
+                def releaseUrl = 'https://maven.yuluo.dev/repository/maven-releases/'
+                def snapshotUrl = 'https://maven.yuluo.dev/repository/maven-snapshots/'
+                url = Objects.requireNonNullElse(ENV.MOD_RELEASE, false) ? releaseUrl : snapshotUrl
+
+                credentials {
+                    username Objects.requireNonNullElse(ENV.MOD_MAVEN_USER, "")
+                    password Objects.requireNonNullElse(ENV.MOD_MAVEN_PASS, "")
+                }
             }
         }
     }
@@ -240,6 +244,26 @@ subprojects {
     components.java {
         withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
             skip()
+        }
+    }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                artifactId = "${rootProject.name}-${project.name}"
+                version = project.version
+                from components.java
+            }
+        }
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId = "${rootProject.name}"
+            version = project.version
+            from components.java
         }
     }
 }
