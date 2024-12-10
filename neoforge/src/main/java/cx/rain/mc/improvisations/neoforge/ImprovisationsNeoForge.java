@@ -1,6 +1,7 @@
 package cx.rain.mc.improvisations.neoforge;
 
 import cx.rain.mc.improvisations.Improvisations;
+import cx.rain.mc.improvisations.client.ImprovisationsClient;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -15,6 +16,6 @@ public class ImprovisationsNeoForge {
     }
 
     private void setupClient(FMLClientSetupEvent event) {
-        Improvisations.initClient();
+        ImprovisationsClient.initClient();
     }
 }
